@@ -1,0 +1,79 @@
+{
+  "realm": "poc",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      { "name": "OPERATEUR", "description": "Lance des téléopérations sur son périmètre" },
+      { "name": "LECTURE_SEULE", "description": "Consulte, n'écrit jamais" }
+    ]
+  },
+  "groups": [
+    { "name": "ELD_A" },
+    { "name": "ELD_B" }
+  ],
+  "clients": [
+    {
+      "clientId": "poc-portail",
+      "name": "PoC portail",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost:5173/*"],
+      "webOrigins": ["+"],
+      "attributes": { "pkce.code.challenge.method": "S256" },
+      "defaultClientScopes": ["basic", "profile", "roles", "web-origins", "acr", "email"],
+      "protocolMappers": [
+        {
+          "name": "designation",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "full.path": "false",
+            "claim.name": "designation",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "operateur.a",
+      "enabled": true,
+      "email": "operateur.a@exemple.test",
+      "emailVerified": true,
+      "firstName": "Operateur",
+      "lastName": "ELD A",
+      "credentials": [{ "type": "password", "value": "${DEMO_USER_PASSWORD}", "temporary": false }],
+      "realmRoles": ["OPERATEUR"],
+      "groups": ["/ELD_A"]
+    },
+    {
+      "username": "lecteur.a",
+      "enabled": true,
+      "email": "lecteur.a@exemple.test",
+      "emailVerified": true,
+      "firstName": "Lecteur",
+      "lastName": "ELD A",
+      "credentials": [{ "type": "password", "value": "${DEMO_USER_PASSWORD}", "temporary": false }],
+      "realmRoles": ["LECTURE_SEULE"],
+      "groups": ["/ELD_A"]
+    },
+    {
+      "username": "operateur.b",
+      "enabled": true,
+      "email": "operateur.b@exemple.test",
+      "emailVerified": true,
+      "firstName": "Operateur",
+      "lastName": "ELD B",
+      "credentials": [{ "type": "password", "value": "${DEMO_USER_PASSWORD}", "temporary": false }],
+      "realmRoles": ["OPERATEUR"],
+      "groups": ["/ELD_B"]
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+# Le script d'initialisation Oracle s'exécute dans un conteneur Linux : un CRLF le casserait.
+*.sh text eol=lf

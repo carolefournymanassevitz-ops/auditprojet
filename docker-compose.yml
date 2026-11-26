@@ -1,0 +1,33 @@
+# Environnement de démonstration local : Oracle Free (schémas PORTAL et CENTRAL_SIM) et Keycloak.
+# Les mots de passe viennent du fichier .env (copie de .env.example, ignorée par git).
+services:
+  oracle:
+    # Étiquette versionnée, identique à celle des tests (OracleConteneurTest) : démo et tests désignent la même image.
+    image: gvenzl/oracle-free:23.26.4-slim-faststart
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+      PORTAL_PASSWORD: ${PORTAL_PASSWORD}
+      PORTAL_APP_PASSWORD: ${PORTAL_APP_PASSWORD}
+    volumes:
+      - ./docker/oracle/init:/container-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.0
+    # Mode développement pour la démonstration locale ; l'architecture cible exige le mode production
+    # (§4.8, exploitation : Keycloak en mode production dans l'architecture cible).
+    command: ["start-dev", "--import-realm", "--http-port=8180"]
+    ports:
+      - "8180:8180"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      DEMO_USER_PASSWORD: ${DEMO_USER_PASSWORD}
+    volumes:
+      - ./docker/keycloak:/opt/keycloak/data/import:ro
